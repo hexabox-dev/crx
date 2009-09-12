@@ -1,10 +1,13 @@
 cRX - a light-weight Regular Expression engine for C language, using Double-Recursion method and Function Pointer Table.
-by kseto (hexabox) 090907
+by kseto (hexabox)
 
 RELEASE NOTE
 ============
 
-version 0.13.11
+*******************
+* version 0.13.11 *
+*******************
+date: 090907
 
 Test Cases: 
 
@@ -48,3 +51,39 @@ pattern,    sample,         matched offset, length
 "a{,1}b",   "zb",           1, 1,   
 "a{,1}b",   "zab",          1, 2,   
 "a{,1}b",   "zaab",         2, 2,   
+
+
+*******************
+* version 0.13.13 *
+*******************
+date 090912
+
+* fixed bug that x{2} would found one occurance
+* change the return type and param list of regex()
+* added magics:
+\d       ie. [0-9]          digit
+\D       ie. [^0-9]         non-digit
+\x       ie. [0-9A-Fa-f]    hex digit
+\X       ie. [^0-9A-Fa-f]
+\o       ie. [0-7]          octal digit         
+\O       ie. [^0-7]
+\w       ie. [0-9A-Za-z_]   word character         
+\W       ie. [^0-9A-Za-z_]
+\h       ie. [0-9A-Za-z]    head of word character     
+\H       ie. [^0-9A-Za-z]
+\a       ie. [A-Za-z]       alphabetic character     
+\A       ie. [^A-Za-z]
+\l       ie. [a-z]          lowercase character     
+\L       ie. [^a-z]
+\u       ie. [A-Z]          uppercase character     
+\U       ie. [^A-Z]
+
+new test cases:
+pattern,    sample,         matched offset, length
+=====================================================
+"a{2}",     "zab",          3, 0,
+"a{2}",     "zaab",         1, 2,
+"a{2}",     "zaaab",        1, 2,
+"[^a-z]",   "123xyz",       0, 1,
+"a\\d+b",   "za789b",       1, 5,
+"\\A*",     "abc12..",      3, 4,
