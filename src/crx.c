@@ -1,16 +1,19 @@
 /*
  * name: crx
  * description: Regular Expression Engine (light weight version) for C Language, using double-recursion and function pointers.
- * author: ken (hexabox) seto
- * date: 2009.08~09
- * license: LGPL
+ * author: ken seto (hexabox)
+ * copyright: 2009~now
+ * license: GPLv3
  *
- * version: 0.13.13.cpp.1
  */
 #include "crx.h"
 
 #include <string.h>
 #include <stdlib.h>   // for atoi
+
+#ifdef _MSC_VER
+#define inline __inline
+#endif
 
 #define TYPE_CHAR   1
 #define TYPE_CMD    2
@@ -182,6 +185,12 @@ _CMD2(escape)
         case 'U':
             strcpy(magic, "[^A-Z]");
             break;
+        case 's':	// spaces
+            strcpy(magic, "[ \t]");
+            break;
+        case 'S':
+            strcpy(magic, "[^ \t]");
+            break;
     }
 
     if (*magic)
@@ -348,7 +357,11 @@ int match(char* pat, char* sam, char* endp)
         if (next_pat  &&  pat < endp  &&  is_suffix(*next_pat))
         {
             cmd = get_cmd(*next_pat);
-            return (sam - start_sam) + (CMD3 cmd->fcn)(pat, sam, endp);
+
+			found = (CMD3 cmd->fcn)(pat, sam, endp);
+            if (!found) return 0;
+
+            return (sam - start_sam) + found;
         }
         else
         {

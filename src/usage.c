@@ -6,7 +6,7 @@ int main()
 {
      int   len;
      char  output[24];
-     strncpy(output, regex("\\d*", "abc123xyz", &len), len);
+     strncpy(output, regex("s\\d+", "sds12345", &len), len);
      output[len] = 0x00;
 
      puts(output);
