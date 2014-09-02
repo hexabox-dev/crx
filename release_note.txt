@@ -87,3 +87,11 @@ pattern,    sample,         matched offset, length
 "[^a-z]",   "123xyz",       0, 1,
 "a\\d+b",   "za789b",       1, 5,
 "\\A*",     "abc12..",      3, 4,
+
+
+140901
+Version:  0.13.13.cpp.1
+Description:
+  This is basically just having 0.13.13 slightly modified so as to be C++ compatible (using g++).
+  Although I still prefer pure C because: 1) plainer for educational purpose, 2) crx is meant for firmware-based or hardware-based regex parser, and 3) I believe it's a good exercise for new CPP learners to do the mod themselves... well... considering to make cRX out-of-the-box cpp-ready, and to further ease the learning path of the cpp learners, I made the change.
+  This project has been posted for some years.  I received feedbacks and reports of using cases.  Some people thought these code were not effecient in some ways, well, they didn't consider the other usages.  Also, I had wanted to add an example of recursive function, along with the classic ones, such as the region-filling algorithm, for educational purpose.

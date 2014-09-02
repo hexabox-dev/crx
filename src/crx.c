@@ -3,26 +3,27 @@
  * description: Regular Expression Engine (light weight version) for C Language, using double-recursion and function pointers.
  * author: ken (hexabox) seto
  * date: 2009.08~09
- * license: BSD, GPL
+ * license: LGPL
  *
- * version: 0.13.13
+ * version: 0.13.13.cpp.1
  */
 #include "crx.h"
 
-typedef enum {
-    TYPE_CHAR = 1,
-    TYPE_CMD  = 2,
-    TYPE_PREFIX = 4,
-    TYPE_SUFFIX = 8,
-    TYPE_OPEN = 16,
-    TYPE_CLOSE = 32,
-} CMD_TYPE;
+#include <string.h>
+#include <stdlib.h>   // for atoi
+
+#define TYPE_CHAR   1
+#define TYPE_CMD    2
+#define TYPE_PREFIX 4
+#define TYPE_SUFFIX 8
+#define TYPE_OPEN   16
+#define TYPE_CLOSE  32
 
 typedef struct {
-    char id;
-    int span;
-    void* fcn;
-    CMD_TYPE type;
+    char    id;
+    int     span;
+    void*   fcn;
+    int     type;
 } Cmd;
 
 // function pointers
@@ -32,6 +33,8 @@ typedef struct {
 // function shortcuts
 #define _CMD2(str)  int c_##str(char* pat, char* sam)
 #define _CMD3(str)  int c_##str(char* pat, char* sam, char* endp)
+
+int match(char*, char*, char*);
 
 /*
  * rules of commands:
@@ -46,18 +49,18 @@ _CMD3(multi);
 _CMD2(option);
 
 Cmd cmd_tbl[] = {
-    '(',    0,    c_group,    TYPE_OPEN,   
-    ')',    1,    NULL,       TYPE_CLOSE, 
-    '[',    0,    c_option,   TYPE_OPEN,  
-    ']',    1,    NULL,       TYPE_CLOSE, 
-    '{',    0,    c_multi,    TYPE_SUFFIX|TYPE_OPEN,
-    '}',    1,    NULL,       TYPE_CLOSE, 
-    '*',    1,    c_multi,    TYPE_SUFFIX,
-    '+',    1,    c_multi,    TYPE_SUFFIX,
-    '?',    1,    c_multi,    TYPE_SUFFIX,
-    '.',    1,    c_any,      TYPE_CMD,   
-   '\\',    2,    c_escape,   TYPE_PREFIX,
-      0,    1,    c_achar,    TYPE_CHAR,  
+    '(',    0,    (void*)c_group,    TYPE_OPEN,   
+    ')',    1,    (void*)NULL,       TYPE_CLOSE, 
+    '[',    0,    (void*)c_option,   TYPE_OPEN,  
+    ']',    1,    (void*)NULL,       TYPE_CLOSE, 
+    '{',    0,    (void*)c_multi,    TYPE_SUFFIX|TYPE_OPEN,
+    '}',    1,    (void*)NULL,       TYPE_CLOSE, 
+    '*',    1,    (void*)c_multi,    TYPE_SUFFIX,
+    '+',    1,    (void*)c_multi,    TYPE_SUFFIX,
+    '?',    1,    (void*)c_multi,    TYPE_SUFFIX,
+    '.',    1,    (void*)c_any,      TYPE_CMD,   
+   '\\',    2,    (void*)c_escape,   TYPE_PREFIX,
+      0,    1,    (void*)c_achar,    TYPE_CHAR,  
 };
 
 Cmd* get_cmd(char id)
@@ -116,7 +119,6 @@ char* get_next_pat(char* cur)   // find next unit of pattern
 inline _CMD2(any) {return 1;}
 inline _CMD2(achar) {return (*pat == *sam);}
 
-
 _CMD2(group)    // sub pattern
 {
     char *close = find_close(pat, ')');
@@ -124,13 +126,14 @@ _CMD2(group)    // sub pattern
     return match(pat+1, sam, close);
 }
 
-
 _CMD2(escape)
 {
     char magic[16] = "";
     
     switch (*++pat)
     {
+        // problem 1: inefficient copying everytime
+        // problem 2: mem illegal access for long magic
         case 'd':   // digit
             strcpy(magic, "[0-9]");
             break;
@@ -190,7 +193,7 @@ _CMD2(escape)
 
 _CMD2(option)
 {
-    bool not;
+    bool invert;
     char* from = NULL;
     char* to = NULL;
     char *close;
@@ -201,8 +204,8 @@ _CMD2(option)
         if (!close) return false;
     } while (close[-1] == '\\');
 
-    not = (pat[1] == '^');
-    pat += not ? 2 : 1;
+    invert = (pat[1] == '^');
+    pat += invert ? 2 : 1;
 
     while (pat < close)
     {
@@ -212,7 +215,7 @@ _CMD2(option)
             if (*to == '\\') to ++;
             if (to >= close) break;
             if (*sam >= *from && *sam <= *to)
-                return (not ? 0 : 1);
+                return (invert ? 0 : 1);
             pat = to + 1;
             continue;
         }
@@ -221,12 +224,12 @@ _CMD2(option)
         if (*from == '\\') from ++;
         if (from >= close) break;
         if (*sam == *from)
-            return (not ? 0 : 1);
+            return (invert ? 0 : 1);
 
         pat++;
     }
 
-    return (not ? 1 : 0);
+    return (invert ? 1 : 0);
 }
 
 _CMD3(multi)
@@ -323,26 +326,6 @@ _CMD3(multi)
     return found;
 }
 
-
-// -------------- core functions ----------------
-
-char* regex(char* pat, char* sam, int* len)
-{
-    *len = 0;
-    while (*pat && *sam)
-    {
-        *len = match(pat, sam, strchr(pat, '\0'));
-        if (*len > 0)
-            break;
-        sam++;
-    }
-
-    if (*len > 0)
-        return sam;
-    else
-        return NULL;
-}
-
 /*
  * return: # found in sam
  */
@@ -379,3 +362,23 @@ int match(char* pat, char* sam, char* endp)
 
     return (sam - start_sam);
 }
+
+// -------------- external interface ---------------
+
+char* regex(char* pat, char* sam, int* len)
+{
+    *len = 0;
+    while (*pat && *sam)
+    {
+        *len = match(pat, sam, strchr(pat, '\0'));
+        if (*len > 0)
+            break;
+        sam++;
+    }
+
+    if (*len > 0)
+        return sam;
+    else
+        return NULL;
+}
+
