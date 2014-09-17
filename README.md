@@ -7,7 +7,7 @@ CRX is a light-weight Regular Expression (regex) C library, using double-recursi
 
 
 ### links
-- (original uoloaded in 2009) https://sourceforge.net/projects/crx/
+- (originally uoloaded in 2009) https://sourceforge.net/projects/crx/
 - (shorthand)   				crx.sf.net
 - (new website @sf)  		[crx.sourceforge.io](crx.sourceforge.io)
 - (future maintenance)   	[Github](https://github.com/hexabox-dev/crx)
