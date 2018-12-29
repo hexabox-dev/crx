@@ -1,0 +1,9 @@
+*~
+._*
+*.swp
+*.bak
+*.orig
+.DS_Store
+
+draft/
+
