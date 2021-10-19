@@ -32,14 +32,14 @@ Ken Seto
 
 ## Files in Sourceforge
 
-Name 							|Modified		|Size
-----							|--------		|----
-test_crx.c					|2014-09-16	|497 Bytes
-crx_0_13_13_cpp_1.zip		|2014-09-02	|4.6 kB
-release_note_0.13.13.txt	|2009-09-12	|2.8 kB
-crx_i86_0.13.13.rar			|2009-09-12	|9.4 kB
-release_note_0.13.11.txt	|2009-09-08	|1.6 kB
-crx_i86_0.13.11.rar			|2009-09-08	|8.3 kB
+Name 		|Modified		|Size
+----		|--------		|----
+[test_crx.c](https://sourceforge.net/projects/crx/files/test_crx.c/download)				|2014-09-16	|497 Bytes
+[crx_0_13_13_cpp_1.zip](https://sourceforge.net/projects/crx/files/crx_0_13_13_cpp_1.zip/download)	|2014-09-02	|4.6 kB
+[release_note_0.13.13.txt](https://sourceforge.net/projects/crx/files/release_note_0.13.13.txt/download)|2009-09-12	|2.8 kB
+[crx_i86_0.13.13.rar](https://sourceforge.net/projects/crx/files/crx_i86_0.13.13.rar/download)		|2009-09-12	|9.4 kB
+[release_note_0.13.11.txt](https://sourceforge.net/projects/crx/files/release_note_0.13.11.txt/download)|2009-09-08	|1.6 kB
+[crx_i86_0.13.11.rar](https://sourceforge.net/projects/crx/files/crx_i86_0.13.11.rar/download)		|2009-09-08	|8.3 kB
 |Totals: 6 Items
 
 
