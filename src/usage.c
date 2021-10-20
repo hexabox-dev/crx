@@ -1,6 +1,7 @@
 // to compile, type:    gcc usage.c crx.o -o usage.exe
 
 #include "crx.h"
+#include <string.h>
 
 int main()
 {

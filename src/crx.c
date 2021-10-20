@@ -44,9 +44,9 @@ int match(char*, char*, char*);
  * 1. return number of consumed characters in sample string
  * 2. TYPE_CLOSE follows TYPE_OPEN immediately in command table
  */
-inline _CMD2(achar);
-inline _CMD2(any);
-inline _CMD2(escape);
+static inline _CMD2(achar);
+static inline _CMD2(any);
+static inline _CMD2(escape);
 _CMD2(group);
 _CMD3(multi);
 _CMD2(option);
@@ -78,7 +78,7 @@ Cmd* get_cmd(char id)
     return cmd;
 }
 
-inline bool is_suffix(char id)
+static inline bool is_suffix(char id)
 {
     Cmd* cmd = get_cmd(id);
     return (cmd ? (cmd->type & TYPE_SUFFIX) == TYPE_SUFFIX : false);
