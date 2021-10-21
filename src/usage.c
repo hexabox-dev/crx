@@ -7,7 +7,8 @@ int main()
 {
      int   len;
      char  output[24];
-     strncpy(output, regex("s\\d+", "sds12345", &len), len);
+	 const char* found = regex("s\\d+", "sds12345", &len);
+     strncpy(output, found, len);
      output[len] = 0x00;
 
      puts(output);
