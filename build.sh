@@ -6,5 +6,7 @@ g++ -c -I. $no_warnings src/crx.c
 
 if [ -f crx.o ]; then
 	ls -l crx.o
+
 	g++ -I. $no_warnings crx.o src/usage.c -o usage
+	g++ -I. $no_warnings crx.o src/unittest.c -o unittest && ./unittest
 fi
