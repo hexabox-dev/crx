@@ -22,7 +22,7 @@ static const struct unittests {
 	{(char*)"a?a",      (char*)"aa",           0, 2},
 	{(char*)"a?",       (char*)"a",            0, 1},
 	{(char*)".*b",      (char*)"bc",           0, 1},
-	{(char*)"a*",       (char*)"zb",          -1, 0},
+	{(char*)"a*",       (char*)"zb",           0, 0},
 	{(char*)"[abc]",    (char*)"zab",          1, 1},
 	{(char*)"[^xyz]",   (char*)"zab",          1, 1},
 	{(char*)"[0-9]",    (char*)"z8t",          1, 1},
@@ -48,7 +48,13 @@ static const struct unittests {
 
 	{(char*)"[^a-z]",   (char*)"123xyz",       0, 1},
 	{(char*)"a\\d+b",   (char*)"za789b",       1, 5},
-	{(char*)"\\A*",     (char*)"abc12..",      3, 4},
+	{(char*)"\\A+",     (char*)"abc12..",      3, 4},	// "12.."
+	{(char*)"\\A*",     (char*)"abc12..",      0, 0},	// ""
+	{(char*)"\\A*\\d",  (char*)"abc12..",      3, 2},	// "12"
+	{(char*)"\\A*.",    (char*)"abc12..",      0, 1},	// "a"
+	{(char*)"s*\\d+",   (char*)"sd1234",	   2, 4},	// "1234"
+	{(char*)"s?\\d+",   (char*)"sd1234",	   2, 4},	// "1234"
+	{(char*)"s+\\d+",   (char*)"sd1234",	  -1, 0},
 };
 
 
@@ -56,7 +62,7 @@ int main()
 {
     int   len;
     int   offset=-1;
-    char  *result;
+    char  *matched;
     char  output[100];
 
 	int numcases = (int)sizeof(aTest)/sizeof(aTest[0]);
@@ -66,12 +72,17 @@ int main()
 
     for( int i = 0 ; i < numcases ;  ++i )
 	{
-        result = regex(aTest[i].pattern, aTest[i].sample, &len);
-        offset = result ? result - aTest[i].sample : -1;
+        matched = regex(aTest[i].pattern, aTest[i].sample, &len);
+		// successful if return a pointer  i.e. not NULL
+
+        offset = matched ? matched - aTest[i].sample : EOF;
 
         if (offset == aTest[i].offset && len == aTest[i].length) {
-//            printf("Test [%s][%s] passed.\n", aTest[i].sample, aTest[i].pattern);
 
+#ifdef DEBUG
+			// no printout if passed to avoid verbose
+            printf("Test [%s][%s] passed.\n", aTest[i].sample, aTest[i].pattern);
+#endif
         } else {
 			count_failed++;
 

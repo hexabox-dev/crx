@@ -5,6 +5,11 @@
  * copyright: 2009~now
  * license: GPLv3
  *
+ * some abbreviations i use:
+ *	 sam		sample string
+ *	 pat		pattern string
+ *	 cur		current pointer of string i.e. char[]
+ *	 endp		end of pattern string '\0'
  */
 #include "crx.h"
 
@@ -28,24 +33,20 @@ int atoi(const char *s) {
 #define TYPE_OPEN   16
 #define TYPE_CLOSE  32
 
-typedef struct {
-    char    id;
-    int     span;
-    void*   fcn;
-    int     type;
-} Cmd;
-
 // function pointers
 #define CMD2    (int(*)(char*,char*))
 #define CMD3    (int(*)(char*,char*,char*))
 
-// function shortcuts
+// command handlers short-hand
 #define _CMD2(str)  int c_##str(char* pat, char* sam)
 #define _CMD3(str)  int c_##str(char* pat, char* sam, char* endp)
 
-int match(char*, char*, char*);
 
-/*
+// declare function signatures
+// the main one ...
+int match(char*, char*, char*);
+/* 
+ * ... and those cmd handlers
  * rules of commands:
  * 1. return number of consumed characters in sample string
  * 2. TYPE_CLOSE follows TYPE_OPEN immediately in command table
@@ -56,6 +57,15 @@ inline _CMD2(escape);
 _CMD2(group);
 _CMD3(multi);
 _CMD2(option);
+
+
+// Cmd struct
+typedef struct {
+    char    id;
+    int     span;
+    void*   fcn;
+    int     type;
+} Cmd;
 
 Cmd cmd_tbl[] = {
     '(',    0,    (void*)c_group,    TYPE_OPEN,   
@@ -75,6 +85,7 @@ Cmd cmd_tbl[] = {
 Cmd* get_cmd(char id)
 {
     Cmd* cmd = &cmd_tbl[0];
+
     while (cmd->id != 0)
     {
         if (id == cmd->id)
@@ -123,21 +134,23 @@ char* get_next_pat(char* cur)   // find next unit of pattern
     return (cur + cmd->span);
 }
 
+
 // -------------- command handlers ----------------
 
 inline _CMD2(any) {return 1;}
-inline _CMD2(achar) {return (*pat == *sam);}
+inline _CMD2(achar) {return *pat == *sam ? 1 : EOF;}
 
-_CMD2(group)    // sub pattern
+_CMD2(group)    // sub pattern, imagine movie 'inception'
 {
     char *close = find_close(pat, ')');
-    if (!close) return false;
+    if (!close) return EOF;	// wrong pattern error? // false;
+
     return match(pat+1, sam, close);
 }
 
 _CMD2(escape)
 {
-    char magic[16] = "";
+    char magic[16] = "";	// WARNING: do not use patterns longer than 15 chars!
     
     switch (*++pat)
     {
@@ -202,7 +215,7 @@ _CMD2(escape)
     if (*magic)
         return match(magic, sam, strchr(magic, 0));
     else
-        return (*pat == *sam);
+        return *pat == *sam ? 1 : EOF;
 }
 
 
@@ -216,7 +229,7 @@ _CMD2(option)
     close = pat;
     do {
         close = find_close(close, ']');
-        if (!close) return false;
+        if (!close) return EOF; // wrong pattern? // false;
     } while (close[-1] == '\\');
 
     invert = (pat[1] == '^');
@@ -230,7 +243,7 @@ _CMD2(option)
             if (*to == '\\') to ++;
             if (to >= close) break;
             if (*sam >= *from && *sam <= *to)
-                return (invert ? 0 : 1);
+                return (invert ? EOF : 1);
             pat = to + 1;
             continue;
         }
@@ -239,12 +252,12 @@ _CMD2(option)
         if (*from == '\\') from ++;
         if (from >= close) break;
         if (*sam == *from)
-            return (invert ? 0 : 1);
+            return (invert ? EOF : 1);
 
         pat++;
     }
 
-    return (invert ? 1 : 0);
+    return (invert ? 1 : EOF);
 }
 
 _CMD3(multi)
@@ -291,7 +304,7 @@ _CMD3(multi)
     {
         found = (CMD2 cmd->fcn)(pat, sam);
 
-        if (!found) break;  // can be less than min
+        if (found < 0) break;  // can be less than min
 
         // condition 1
         repeat ++;
@@ -306,7 +319,7 @@ _CMD3(multi)
                 break;
 
             found = match(next_pat, sam, endp);
-            if (found)    // condition 2
+            if (found >= 0)    // condition 2
             {
                 good_follows = found;
                 good_sam = sam;
@@ -319,7 +332,7 @@ _CMD3(multi)
 
     // return here
     if (repeat < min)
-        found = 0;
+        found = EOF;
 
     else if (!*next_pat)
         found = sam - start_sam;
@@ -336,43 +349,41 @@ _CMD3(multi)
             found = match(next_pat, start_sam, endp);
     }
 
-    else found = 0;
+    else found = EOF;
 
     return found;
 }
 
 /*
- * return: # found in sam
+ * return: number char found in sam, 0+
+ * return EOF if not found.  i.e. 0 char is a valid result.
  */
 int match(char* pat, char* sam, char* endp)
 {
-    Cmd* cmd;
-    char* next_pat;
-    int  found;
-    char* start_sam = sam;
-
+    char* start_sam = sam;	// remember where sample string starts, because we will iterate sam.
 
     while (pat < endp)
     {
-        if (*pat == 0)  break;
-        if (*sam == 0)  return 0;
+        if (*pat == '\0')  break;		// all pattern consumed  i.e. found
+        if (*sam == '\0')  return 0;	// sample string ran out i.e. not found
 
-        next_pat  = get_next_pat(pat);
-        cmd = get_cmd(*pat);
+        Cmd* cmd = get_cmd(*pat);
+        char* next_pat = get_next_pat(pat);
+		int  found;
 
         if (next_pat  &&  pat < endp  &&  is_suffix(*next_pat))
         {
             cmd = get_cmd(*next_pat);
 
 			found = (CMD3 cmd->fcn)(pat, sam, endp);
-            if (!found) return 0;
+            if (found < 0) return EOF;
 
             return (sam - start_sam) + found;
         }
         else
         {
             found = (CMD2 cmd->fcn)(pat, sam);
-            if (!found) return 0;
+            if (found < 0) return EOF;
 
             sam += found;
             pat = next_pat;
@@ -384,20 +395,23 @@ int match(char* pat, char* sam, char* endp)
 
 // -------------- external interface ---------------
 
+/*
+ * return pointer of found string, NULL otherwise.
+ */
 char* regex(char* pat, char* sam, int* len)
 {
-    *len = 0;
+	char* endp = strchr(pat, '\0');		// endp not necessarily '\0' in mid string
+
     while (*pat && *sam)
     {
-        *len = match(pat, sam, strchr(pat, '\0'));
-        if (*len > 0)
-            break;
-        sam++;
+        *len = match(pat, sam, endp);
+        if (*len >= 0)
+            return sam;
+
+        ++sam;		// try next character
     }
 
-    if (*len > 0)
-        return sam;
-    else
-        return NULL;
+	*len = 0;
+	return NULL;
 }
 
