@@ -1,15 +1,36 @@
-// to compile, type:    gcc usage.c crx.o -o usage.exe
+/*
+ * to compile:
+ *	   gcc usage.c crx.o -o usage.exe
+ */
+
+#include <string.h>
+#include <string.h>
+#include <assert.h>
 
 #include "crx.h"
-#include <string.h>
+
+#define BUFLEN 24
 
 int main()
 {
-     int   len;
-     char  output[24];
-	 const char* found = regex("s\\d+", "sds12345", &len);
-     strncpy(output, found, len);
-     output[len] = 0x00;
+     int  len;
+     char output[BUFLEN];
 
-     puts(output);
+	 char sample[] = "sds12345";
+	 char pattern[] = "s\\d+";
+
+	 const char* found = regex(pattern, sample, &len);
+
+	 if (found) {
+		 assert(len < BUFLEN);
+
+		 long offset = found - sample;
+		 strncpy(output, found, len);
+		 output[len] = '\0';
+
+		 printf("found at offset %ld >%s<\n", offset, output);
+
+	 } else {
+		 puts("not found");
+	 }
 }
