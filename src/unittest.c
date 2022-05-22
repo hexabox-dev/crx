@@ -55,6 +55,8 @@ static const struct unittests {
 	{(char*)"s*\\d+",   (char*)"sd1234",	   2, 4},	// "1234"
 	{(char*)"s?\\d+",   (char*)"sd1234",	   2, 4},	// "1234"
 	{(char*)"s+\\d+",   (char*)"sd1234",	  -1, 0},
+	{(char*)"s\\d+",    (char*)"sds1234",	   2, 5},
+	{(char*)"s\\d*",    (char*)"sd1234",	   0, 1},
 };
 
 

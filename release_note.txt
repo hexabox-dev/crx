@@ -95,3 +95,28 @@ Description:
   This is basically just having 0.13.13 slightly modified so as to be C++ compatible (using g++).
   Although I still prefer pure C because: 1) plainer for educational purpose, 2) crx is meant for firmware-based or hardware-based regex parser, and 3) I believe it's a good exercise for new CPP learners to do the mod themselves... well... considering to make cRX out-of-the-box cpp-ready, and to further ease the learning path of the cpp learners, I made the change.
   This project has been posted for some years.  I received feedbacks and reports of using cases.  Some people thought these code were not effecient in some ways, well, they didn't consider the other usages.  Also, I had wanted to add an example of recursive function, along with the classic ones, such as the region-filling algorithm, for educational purpose.
+
+
+220522
+Version:  1.22.0
+Description:
+  finally respond to feedback after 9 years ;)
+
+  added build script and test cases for regression test automation
+  changed internal function fail logic, from false to EOF, to support valid result offset 0 length 0 if pattern is optional, for example, to find "a*" in "bc".
+  14 additional test cases
+	"a{1}",     "zb",          -1, 0},
+	"a{1}",     "zab",          1, 1},
+	"a{1}",     "zaab",         1, 1},
+	"[^a-z]",   "123xyz",       0, 1},
+	"a\\d+b",   "za789b",       1, 5},
+	"\\A+",     "abc12..",      3, 4},	// "12.."
+	"\\A*",     "abc12..",      0, 0},	// ""
+	"\\A*\\d",  "abc12..",      3, 2},	// "12"
+	"\\A*.",    "abc12..",      0, 1},	// "a"
+	"s*\\d+",   "sd1234",	    2, 4},	// "1234"
+	"s?\\d+",   "sd1234",	    2, 4},	// "1234"
+	"s+\\d+",   "sd1234",	   -1, 0},
+	"s\\d+",    "sds1234",      2, 5},
+	"s\\d*",    "sd1234",       0, 1},
+
