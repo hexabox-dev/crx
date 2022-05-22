@@ -9,7 +9,13 @@
 #include "crx.h"
 
 #include <string.h>
-#include <stdlib.h>   // for atoi
+//#include <stdlib.h>   // for atoi
+int atoi(const char *s) {
+    int v=0;
+    while (s && *s >= '0' && *s <='9')
+	    v = v*10 + *s++ - '0';
+    return v;
+}
 
 #ifdef _MSC_VER
 #define inline __inline
@@ -44,9 +50,9 @@ int match(char*, char*, char*);
  * 1. return number of consumed characters in sample string
  * 2. TYPE_CLOSE follows TYPE_OPEN immediately in command table
  */
-static inline _CMD2(achar);
-static inline _CMD2(any);
-static inline _CMD2(escape);
+inline _CMD2(achar);
+inline _CMD2(any);
+inline _CMD2(escape);
 _CMD2(group);
 _CMD3(multi);
 _CMD2(option);
