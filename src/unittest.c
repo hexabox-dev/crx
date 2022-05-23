@@ -8,55 +8,55 @@ static const struct unittests {
     int offset;
     int length;
 } aTest[] = {
-	{(char*)"a*b",      (char*)"aaaabx",       0, 5},
-	{(char*)"a*b",      (char*)"bx",           0, 1},
-	{(char*)"a+b",      (char*)"aaaabx",       0, 5},
-	{(char*)"a?b",      (char*)"abx",          0, 2},
-	{(char*)"a?b",      (char*)"bx",           0, 1},
-	{(char*)"(ab)+c",   (char*)"ababcd",       0, 5},
-	{(char*)"(ab)+c",   (char*)"xyzababc",     3, 5},
-	{(char*)"a\\*c",    (char*)"za*c",         1, 3},
-	{(char*)"f..k",     (char*)"zfolky",       1, 4},
-	{(char*)"z.*b",     (char*)"xyzababc",     2, 5},
-	{(char*)"a?b",      (char*)"aaab",         2, 2},
-	{(char*)"a?a",      (char*)"aa",           0, 2},
-	{(char*)"a?",       (char*)"a",            0, 1},
-	{(char*)".*b",      (char*)"bc",           0, 1},
-	{(char*)"a*",       (char*)"zb",           0, 0},
-	{(char*)"[abc]",    (char*)"zab",          1, 1},
-	{(char*)"[^xyz]",   (char*)"zab",          1, 1},
-	{(char*)"[0-9]",    (char*)"z8t",          1, 1},
-	{(char*)"[0-9]+",   (char*)"abc337xyz",    3, 3},
+	{	"a*b",      	"aaaabx",       0,  5	},
+	{	"a*b",      	"bx",           0,  1	},
+	{	"a+b",      	"aaaabx",       0,  5	},
+	{	"a?b",      	"abx",          0,  2	},
+	{	"a?b",      	"bx",           0,  1	},
+	{	"(ab)+c",   	"ababcd",       0,  5	},
+	{	"(ab)+c",   	"xyzababc",     3,  5	},
+	{	"a\\*c",    	"za*c",         1,  3	},
+	{	"f..k",     	"zfolky",       1,  4	},
+	{	"z.*b",     	"xyzababc",     2,  5	},
+	{	"a?b",      	"aaab",         2,  2	},
+	{	"a?a",      	"aa",           0,  2	},
+	{	"a?",       	"a",            0,  1	},
+	{	".*b",      	"bc",           0,  1	},
+	{	"a*",       	"zb",           0,  0	},
+	{	"[abc]",    	"zab",          1,  1	},
+	{	"[^xyz]",   	"zab",          1,  1	},
+	{	"[0-9]",    	"z8t",          1,  1	},
+	{	"[0-9]+",   	"abc337xyz",    3,  3	},
+	{	"[^a-z]",   	"123xyz",       0,  1	},
 
-    {(char*)"a{1,2}",   (char*)"zb",          -1, 0},
-	{(char*)"a{1,2}",   (char*)"zab",          1, 1},
-	{(char*)"a{1,2}",   (char*)"zaab",         1, 2},
-	{(char*)"a{1,2}",   (char*)"zaaab",        1, 2},
-	{(char*)"a{1}",     (char*)"zb",          -1, 0},
-	{(char*)"a{1}",     (char*)"zab",          1, 1},
-	{(char*)"a{1}",     (char*)"zaab",         1, 1},
-	{(char*)"a{1,}",    (char*)"zb",          -1, 0},
-	{(char*)"a{1,}",    (char*)"zab",          1, 1},
-	{(char*)"a{1,}",    (char*)"zaab",         1, 2},
-	{(char*)"a{,1}",    (char*)"zb",           0, 0},	// DO match
-	{(char*)"a{,1}b",   (char*)"zb",           1, 1},
-	{(char*)"a{,1}b",   (char*)"zab",          1, 2},
-	{(char*)"a{,1}b",   (char*)"zaab",         2, 2},
-	{(char*)"a{2}",     (char*)"zab",         -1, 0},
-	{(char*)"a{2}",     (char*)"zaab",         1, 2},
-	{(char*)"a{2}",     (char*)"zaaab",        1, 2},
+    {	"a{1,2}",   	"zb",          -1,  0	},
+	{	"a{1,2}",   	"zab",          1,  1	},
+	{	"a{1,2}",   	"zaab",         1,  2	},
+	{	"a{1,2}",   	"zaaab",        1,  2	},
+	{	"a{1}",     	"zb",          -1,  0	},
+	{	"a{1}",     	"zab",          1,  1	},
+	{	"a{1}",     	"zaab",         1,  1	},
+	{	"a{1,}",    	"zb",          -1,  0	},
+	{	"a{1,}",    	"zab",          1,  1	},
+	{	"a{1,}",    	"zaab",         1,  2	},
+	{	"a{,1}",    	"zb",           0,  0	},
+	{	"a{,1}b",   	"zb",           1,  1	},
+	{	"a{,1}b",   	"zab",          1,  2	},
+	{	"a{,1}b",   	"zaab",         2,  2	},
+	{	"a{2}",     	"zab",         -1,  0	},
+	{	"a{2}",     	"zaab",         1,  2	},
+	{	"a{2}",     	"zaaab",        1,  2	},
 
-	{(char*)"[^a-z]",   (char*)"123xyz",       0, 1},
-	{(char*)"a\\d+b",   (char*)"za789b",       1, 5},
-	{(char*)"\\A+",     (char*)"abc12..",      3, 4},	// "12.."
-	{(char*)"\\A*",     (char*)"abc12..",      0, 0},	// ""
-	{(char*)"\\A*\\d",  (char*)"abc12..",      3, 2},	// "12"
-	{(char*)"\\A*.",    (char*)"abc12..",      0, 1},	// "a"
-	{(char*)"s*\\d+",   (char*)"sd1234",	   2, 4},	// "1234"
-	{(char*)"s?\\d+",   (char*)"sd1234",	   2, 4},	// "1234"
-	{(char*)"s+\\d+",   (char*)"sd1234",	  -1, 0},
-	{(char*)"s\\d+",    (char*)"sds1234",	   2, 5},
-	{(char*)"s\\d*",    (char*)"sd1234",	   0, 1},
+	{	"a\\d+b",   	"za789b",       1,  5	},
+	{	"\\A+",     	"abc12..",      3,  4	},	// "12.."
+	{	"\\A*",     	"abc12..",      0,  0	},	// ""
+	{	"\\A*\\d",  	"abc12..",      3,  2	},	// "12"
+	{	"\\A*.",    	"abc12..",      0,  1	},	// "a"
+	{	"s*\\d+",   	"sd1234",       2,  4	},	// "1234"
+	{	"s?\\d+",   	"sd1234",       2,  4	},	// "1234"
+	{	"s+\\d+",   	"sd1234",      -1,  0	},
+	{	"s\\d+",    	"sds1234",      2,  5	},
+	{	"s\\d*",    	"sd1234",       0,  1	},
 };
 
 
