@@ -9,3 +9,6 @@ draft/
 
 # cxx
 *.o
+
+# xcode
+*.dSYM/
