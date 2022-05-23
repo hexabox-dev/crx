@@ -12,3 +12,5 @@ draft/
 
 # xcode
 *.dSYM/
+
+output/
