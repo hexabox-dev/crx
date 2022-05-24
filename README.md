@@ -1,36 +1,36 @@
 # Crx Regular eXpression
 
-CRX is a light-weight Regular Expression (regex) C library, using double-recursion. 
+CRX is a light-weight Regular Expression (RegEx) C library
 
-(command prompt tester included)
+This project aims to provide another example of recursion.
 
 
-
-### links
-- (originally uoloaded in 2009) https://sourceforge.net/projects/crx/
-- (shorthand)   				crx.sf.net
-- (new website @sf)  		[crx.sourceforge.io](crx.sourceforge.io)
-- (future maintenance)   	[Github](https://github.com/hexabox-dev/crx)
-
+### Links
+- Originally published in 2009, https://sourceforge.net/projects/crx/
+- (URL shorthand:	crx.sf.net)
+- From now on updates will be in https://github.com/hexabox-dev/crx
 
 
 ## Features
-* Tiny - binary size in kilo bytes
-* Demonstrate indirectly recursive invocation
-* Simple for students - calling one and only one function
+* Tiny - binary size just few kilo bytes
+* Demonstrate indirect recursive invocation and function pointer
+* Simple for students - one function to call
+
 
 ## Categories
 Algorithms, Education
 
+
 ## License
-BSD License, GNU General Public License version 2.0 (GPLv2)
+GNU General Public License version 3.0 (GPLv3)
 
 
-## Project admin
+## Author
 Ken Seto
 
 
-## Files in Sourceforge (might not compile, need some tweaks)
+## Files in Sourceforge 
+(might not compile, need some tweaks)
 
 Name 		|Modified		|Size
 ----		|--------		|----
@@ -40,6 +40,5 @@ Name 		|Modified		|Size
 [crx_i86_0.13.13.rar](https://sourceforge.net/projects/crx/files/crx_i86_0.13.13.rar/download)		|2009-09-12	|9.4 kB
 [release_note_0.13.11.txt](https://sourceforge.net/projects/crx/files/release_note_0.13.11.txt/download)|2009-09-08	|1.6 kB
 [crx_i86_0.13.11.rar](https://sourceforge.net/projects/crx/files/crx_i86_0.13.11.rar/download)		|2009-09-08	|8.3 kB
-|Totals: 6 Items
 
 
