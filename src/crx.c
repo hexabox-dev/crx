@@ -150,72 +150,39 @@ _CMD2(group)    // sub pattern, imagine movie 'inception'
 
 _CMD2(escape)
 {
-    char magic[16] = "";	// WARNING: do not use patterns longer than 15 chars!
-    
-    switch (*++pat)
-    {
-        // problem 1: inefficient copying everytime
-        // problem 2: mem illegal access for long magic
-        case 'd':   // digit
-            strcpy(magic, "[0-9]");
-            break;
-        case 'D':   // non-digit
-            strcpy(magic, "[^0-9]");
-            break;
-        case 'x':   // hex digit
-            strcpy(magic, "[0-9A-Fa-f]");
-            break;
-        case 'X':
-            strcpy(magic, "[^0-9A-Fa-f]");
-            break;
-        case 'o':   // octal digit
-            strcpy(magic, "[0-7]");
-            break;
-        case 'O':
-            strcpy(magic, "[^0-7]");
-            break;
-        case 'w':   // word character
-            strcpy(magic, "[0-9A-Za-z_]");
-            break;
-        case 'W':
-            strcpy(magic, "[^0-9A-Za-z_]");
-            break;
-        case 'h':   // head of word character
-            strcpy(magic, "[0-9A-Za-z]");
-            break;
-        case 'H':
-            strcpy(magic, "[^0-9A-Za-z]");
-            break;
-        case 'a':   // alphabetic character
-            strcpy(magic, "[A-Za-z]");
-            break;
-        case 'A':
-            strcpy(magic, "[^A-Za-z]");
-            break;
-        case 'l':   // lowercase character
-            strcpy(magic, "[a-z]");
-            break;
-        case 'L':
-            strcpy(magic, "[^a-z]");
-            break;
-        case 'u':   // uppercase character
-            strcpy(magic, "[A-Z]");
-            break;
-        case 'U':
-            strcpy(magic, "[^A-Z]");
-            break;
-        case 's':	// spaces
-            strcpy(magic, "[ \t]");
-            break;
-        case 'S':
-            strcpy(magic, "[^ \t]");
-            break;
-    }
+    ++pat;
 
-    if (*magic)
-        return match(magic, sam, strchr(magic, 0));
-    else
-        return *pat == *sam ? 1 : EOF;
+	static const struct {
+		char ch;
+		char *pat;
+	} magic[] = {
+		{'d', "[0-9]"},         // digits
+		{'D', "[^0-9]"},
+		{'x', "[0-9A-Fa-f]"},   // hexidecimal
+		{'X', "[^0-9A-Fa-f]"},
+		{'o', "[0-7]"},         // octal
+		{'O', "[^0-7]"},
+		{'w', "[0-9A-Za-z_]"},  // word char
+		{'W', "[^0-9A-Za-z_]"},
+		{'h', "[0-9A-Za-z]"},   // head of word
+		{'H', "[^0-9A-Za-z]"},
+		{'a', "[A-Za-z]"},      // alphabetic
+		{'A', "[^A-Za-z]"},
+		{'l', "[a-z]"},         // lower cases
+		{'L', "[^a-z]"},
+		{'u', "[A-Z]"},         // upper cases
+		{'U', "[^A-Z]"},
+		{'s', "[ \t]"},         // spaces
+		{'S', "[^ \t]"},
+	};
+	const int NUM_MAGIC = sizeof(magic) / sizeof(magic[0]);
+
+	for (int i=0; i<NUM_MAGIC; i++) {
+		if (*pat == magic[i].ch)
+			return match(magic[i].pat, sam, strchr(magic[i].pat, 0));
+	}
+
+    return *pat == *sam ? 1 : EOF;
 }
 
 
