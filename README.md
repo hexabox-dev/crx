@@ -7,7 +7,7 @@ This project aims to provide another example of recursion.
 
 ### Links
 - Originally published in 2009, https://sourceforge.net/projects/crx/
-- (URL shorthand:	crx.sf.net)
+	(URL shorthand:	http://crx.sf.net)
 - From now on updates will be in https://github.com/hexabox-dev/crx
 
 
